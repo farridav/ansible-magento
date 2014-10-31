@@ -1,0 +1,46 @@
+---
+
+- name: Magento | Create application group
+  group: name={{ application_group }} system=yes state=present
+
+- name: Magento | Ensure /var/www/ folder is made before we try to add our user
+  file: path=/var/www state=directory owner='www-data' group='www-data'
+
+- name: Magento | Add application user
+  user: name={{ application_user }} group={{ application_group }} state=present
+        createhome=yes home={{ home_dir }} shell=/bin/bash system=true
+
+- name: Grant application user sudo access
+  copy: content='{{ application_user }} ALL=(ALL) NOPASSWD:ALL'
+        dest=/etc/sudoers.d/application_user mode=0440
+
+- name: Magento | Ensure storage directory is made
+  file: path={{ magento_storage_dir }} state=directory
+        owner={{ application_user }} group='www-data'
+
+- name: Magento | Ensure media directory is made
+  file: path={{ magento_media_dir }} state=directory
+        owner={{ application_user }} group='www-data'
+
+- name: Magento | Ensure var directory is made
+  file: path={{ magento_var_dir }} state=directory
+        owner={{ application_user }} group='www-data'
+
+- name: Add key to authorized keys
+  authorized_key: user={{ application_user }} key="{{ public_key }}"
+
+- name: Magento | Set application environmental variables
+  template: src=bash_profile.j2 dest={{ home_dir }}/.bash_profile
+            owner={{ application_user }} group={{ application_user }}
+  tags:
+    - env
+
+- name: Magento | Create the applications releases Folder
+  file: path={{ release_dir }} state=directory
+        owner={{ application_user }} group='www-data'
+
+- name: Password protect our site
+  htpasswd: path=/var/www/{{ magento_project_name }}/.htpasswd
+            name={{ magento_auth_user }} password={{ magento_auth_password }}
+            owner={{ application_user }} group=www-data mode=0640
+  when: magento_auth

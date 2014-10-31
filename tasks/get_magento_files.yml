@@ -1,0 +1,18 @@
+---
+
+- name: Magento | Download magento
+  get_url: url=http://www.magentocommerce.com/downloads/assets/{{ magento_version }}/magento-{{ magento_version }}.tar.gz
+           dest=/tmp/magento-{{ magento_version }}.tar.gz
+
+- name: Magento | Extract Magento
+  command: chdir=/tmp tar -xf /tmp/magento-{{ magento_version }}.tar.gz
+           creates=/tmp/magento
+
+- name: Magento | Copy Magento to Root
+  command: cp -r /tmp/magento/ {{ magento_src_dir }} creates={{ magento_src_dir }}
+
+- name: Magento | Make mage file executable
+  file: path={{ magento_src_dir }}/mage mode=550
+
+- name: Cleanup | Remove installation crud
+  shell: rm -rf {{ magento_src_dir }}/*.{sample,txt}

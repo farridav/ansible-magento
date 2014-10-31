@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<config>
+    <global>
+        <install>
+            <date><![CDATA[Wed, 10 Sep 2014 20:24:00 +0000]]></date>
+        </install>
+        <crypt>
+            <key><![CDATA[{{ magento_secret_key }}]]></key>
+        </crypt>
+        <disable_local_modules>false</disable_local_modules>
+        <resources>
+            <db>
+                <table_prefix><![CDATA[{{ table_prefix }}]]></table_prefix>
+            </db>
+            <default_setup>
+                <connection>
+                    <host><![CDATA[{{ magento_db_host }}]]></host>
+                    <username><![CDATA[{{ magento_db_user }}]]></username>
+                    <password><![CDATA[{{ magento_db_password }}]]></password>
+                    <dbname><![CDATA[{{ magento_db_name }}]]></dbname>
+                    <initStatements><![CDATA[SET NAMES utf8]]></initStatements>
+                    <model><![CDATA[mysql4]]></model>
+                    <type><![CDATA[pdo_mysql]]></type>
+                    <pdoType><![CDATA[]]></pdoType>
+                    <active>1</active>
+                </connection>
+            </default_setup>
+        </resources>
+        <session_save><![CDATA[{{ session_storage }}]]></session_save>
+        {% if magento_use_memcached %}
+        <cache>
+          <backend>memcached</backend>
+          <memcached>
+            <servers>
+              <server>
+                <host><![CDATA[{{ magento_memcached_host }}]]></host>
+                <port><![CDATA[{{ magento_memcached_port }}]]></port>
+                <persistent><![CDATA[1]]></persistent>
+              </server>
+            </servers>
+            <compression><![CDATA[0]]></compression>
+            <cache_dir><![CDATA[]]></cache_dir>
+            <hashed_directory_level><![CDATA[]]></hashed_directory_level>
+            <hashed_directory_umask><![CDATA[]]></hashed_directory_umask>
+            <file_name_prefix><![CDATA[]]></file_name_prefix>
+          </memcached>
+        </cache>
+        {% endif %}
+    </global>
+    <admin>
+        <routers>
+            <adminhtml>
+                <args>
+                    <frontName><![CDATA[{{ admin_path }}]]></frontName>
+                </args>
+            </adminhtml>
+        </routers>
+    </admin>
+</config>

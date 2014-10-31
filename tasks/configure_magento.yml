@@ -1,0 +1,47 @@
+---
+
+- name: Install packages required by magento
+  apt: name={{ item }} state=present update_cache=yes
+  with_items:
+    - php5-gd
+    - php5-mysql
+    - php5-curl
+    - php5-mcrypt
+    - php-apc
+  notify:
+    - restart php-fpm
+
+- name: Magento | Mage Setup
+  command: chdir={{ magento_src_dir }} ./mage mage-setup .
+
+- name: Magento | Mage Stable State
+  command: chdir={{ magento_src_dir }} ./mage config-set preferred_state stable
+
+- name: Magento | Ensure needed files are executable
+  file: path={{ magento_src_dir }}/{{ item }} mode=550
+  with_items:
+    - mage
+    - cron.sh
+
+- name: Magento | write local.xml file out
+  template: src=local.xml.j2 dest={{ magento_src_dir }}/app/etc/local.xml
+  tags:
+    - config
+
+- name: Magento | write vhost
+  template: src=vhost.conf.j2 dest=/etc/nginx/sites-available/{{ magento_project_name }}
+
+- name: Magento | disable default vhost
+  file: path=/etc/nginx/sites-enabled/default state=absent
+  notify:
+    - restart nginx
+
+- name: Magento | enable vhost
+  file: src=/etc/nginx/sites-available/{{ magento_project_name }}
+        dest=/etc/nginx/sites-enabled/{{ magento_project_name }} state=link
+  notify:
+    - restart nginx
+
+- name: Magento | setup cron
+  cron: name='Magento cron' minute='*/5' user='{{ application_user }}'
+        job='/bin/sh {{ current_release }}/cron.sh'
