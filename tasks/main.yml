@@ -1,8 +1,6 @@
 ---
 
 - include: setup_users.yml
-  tags:
-    - users
 
 - include: get_magento_files.yml
 

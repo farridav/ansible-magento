@@ -5,6 +5,15 @@ map $http_host $magesite {
 server {
   listen {{ magento_port }};
 
+  {% if magento_ssl: %}
+  listen 443 ssl;
+
+  ssl_certificate     {{ magento_ssl_crt_file }};
+  ssl_certificate_key {{ magento_ssl_key_file }};
+  ssl_protocols       SSLv3 TLSv1 TLSv1.1 TLSv1.2;
+  ssl_ciphers         HIGH:!aNULL:!MD5;
+  {% endif %}
+
   client_max_body_size 4G;
 
   access_log  /var/log/nginx/access.log;
@@ -46,9 +55,9 @@ server {
   }
 
   location ~* \.(ico|css|js|gif|jpe?g|png)$ {
-      expires max;
-      add_header Pragma public;
-      add_header Cache-Control "public, must-revalidate, proxy-revalidate";
+    expires max;
+    add_header Pragma public;
+    add_header Cache-Control "public, must-revalidate, proxy-revalidate";
   }
 
   # handle magento

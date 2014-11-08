@@ -13,6 +13,9 @@ magento_var_dir: '{{ magento_storage_dir }}/var'
 magento_use_memcached: yes
 magento_memcached_port: 11211
 magento_memcached_host: localhost
+magento_ssl: no
+magento_ssl_crt_file:
+magento_ssl_key_file:
 
 #System handlers
 application_group: '{{ magento_project_name }}'
