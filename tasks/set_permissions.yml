@@ -13,7 +13,6 @@
 - name: Magento | Ensure the owner can write to these directories
   command: chmod g+w {{ item }}
   with_items:
-    - '{{ magento_var_dir }}'
     - '{{ magento_src_dir }}/app/etc'
     - '{{ magento_src_dir }}/var'
 

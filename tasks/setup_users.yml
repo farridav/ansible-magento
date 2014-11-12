@@ -22,10 +22,6 @@
   file: path={{ magento_media_dir }} state=directory
         owner={{ application_user }} group='www-data'
 
-- name: Magento | Ensure var directory is made
-  file: path={{ magento_var_dir }} state=directory
-        owner={{ application_user }} group='www-data'
-
 - name: Add key to authorized keys
   authorized_key: user={{ application_user }} key="{{ public_key }}"
 

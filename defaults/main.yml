@@ -9,7 +9,6 @@ previous_release: '{{ home_dir }}/previous'
 magento_src_dir: /opt/magento_src
 magento_storage_dir: '/mnt/{{ magento_project_name }}'
 magento_media_dir: '{{ magento_storage_dir }}/media'
-magento_var_dir: '{{ magento_storage_dir }}/var'
 magento_use_memcached: yes
 magento_memcached_port: 11211
 magento_memcached_host: localhost
