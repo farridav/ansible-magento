@@ -3,16 +3,16 @@ force_color_prompt=yes
 alias ll='ls -lah --color=auto'
 alias l='ls -h1 --color=auto'
 
-export PS1="\[\033[0;33m\]\u\[\033[0;37m\]@\[\033[0;96m\]{{ application_group }}\[\033[0;37m\]]\342\224\200[\[\033[0;32m\]\w\[\033[0;37m\]]\n\[\033[0;37m\]\342\224\224\342\224\200\342\224\200\342\225\274 \[\033[0m\]"
+export PS1="\[\033[0;33m\]\u\[\033[0;37m\]@\[\033[0;96m\]{{ magento_application_group }}\[\033[0;37m\]]\342\224\200[\[\033[0;32m\]\w\[\033[0;37m\]]\n\[\033[0;37m\]\342\224\224\342\224\200\342\224\200\342\225\274 \[\033[0m\]"
 
-export APP_RELEASE_DIR='{{ release_dir }}'
-export APP_CURRENT_RELEASE='{{ current_release }}'
-export APP_PREVIOUS_RELEASE='{{ previous_release }}'
+export APP_RELEASE_DIR='{{ magento_release_dir }}'
+export APP_CURRENT_RELEASE='{{ magento_current_release }}'
+export APP_PREVIOUS_RELEASE='{{ magento_previous_release }}'
 export APP_DB_NAME='{{ magento_db_name }}'
 export APP_DB_USER='{{ magento_db_user }}'
 export APP_DB_HOST='{{ magento_db_host }}'
 export APP_DB_PASS='{{ magento_db_password }}'
 export APP_MAGE_SRC='{{ magento_src_dir }}'
 export APP_MEDIA_DIR='{{ magento_media_dir }}'
-export APP_UNIX_USER='{{ application_user }}'
-export APP_UNIX_GROUP='{{ application_group }}'
+export APP_UNIX_USER='{{ magento_application_user }}'
+export APP_UNIX_GROUP='{{ magento_application_group }}'

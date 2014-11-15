@@ -43,5 +43,5 @@
     - restart nginx
 
 - name: Magento | setup cron
-  cron: name='Magento cron' minute='*/5' user='{{ application_user }}'
-        job='/bin/sh {{ current_release }}/cron.sh'
+  cron: name='Magento cron' minute='*/5' user='{{ magento_application_user }}'
+        job='/bin/sh {{ magento_current_release }}/cron.sh'

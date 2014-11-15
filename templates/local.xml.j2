@@ -10,7 +10,7 @@
         <disable_local_modules>false</disable_local_modules>
         <resources>
             <db>
-                <table_prefix><![CDATA[{{ table_prefix }}]]></table_prefix>
+                <table_prefix><![CDATA[{{ magento_table_prefix }}]]></table_prefix>
             </db>
             <default_setup>
                 <connection>
@@ -26,7 +26,7 @@
                 </connection>
             </default_setup>
         </resources>
-        <session_save><![CDATA[{{ session_storage }}]]></session_save>
+        <session_save><![CDATA[{{ magento_session_storage }}]]></session_save>
         {% if magento_use_memcached %}
         <cache>
           <backend>memcached</backend>
@@ -51,7 +51,7 @@
         <routers>
             <adminhtml>
                 <args>
-                    <frontName><![CDATA[{{ admin_path }}]]></frontName>
+                    <frontName><![CDATA[{{ magento_admin_path }}]]></frontName>
                 </args>
             </adminhtml>
         </routers>

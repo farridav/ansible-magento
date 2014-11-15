@@ -2,7 +2,7 @@
 
 - name: Magento | Change owner and group of {{ magento_src_dir }}
   file: path={{ magento_src_dir }}
-        owner={{ application_user }} group=www-data state=directory recurse=yes
+        owner={{ magento_application_user }} group=www-data state=directory recurse=yes
 
 - name: Magento | Give All magento files 644 permission
   command: find {{ magento_src_dir }} -type f -exec chmod 644 {} \;
