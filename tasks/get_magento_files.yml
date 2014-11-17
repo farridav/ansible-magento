@@ -1,18 +1,31 @@
 ---
 
-- name: Magento | Download magento
+- name: Magento | Check if we have magento downloaded
+  stat: path=/opt/magento-{{ magento_version }}.tar.gz get_md5=no
+  register: magento
+
+- name: Magento | Download Magento
   get_url: url=http://www.magentocommerce.com/downloads/assets/{{ magento_version }}/magento-{{ magento_version }}.tar.gz
-           dest=/tmp/magento-{{ magento_version }}.tar.gz
+           dest=/opt/magento-{{ magento_version }}.tar.gz
+  when: magento.stat.isdir is defined and magento.stat.isdir
 
 - name: Magento | Extract Magento
-  command: chdir=/tmp tar -xf /tmp/magento-{{ magento_version }}.tar.gz
-           creates=/tmp/magento
+  command: chdir=/opt tar -xf /opt/magento-{{ magento_version }}.tar.gz
+           creates=/opt/magento
 
-- name: Magento | Copy Magento to Root
-  command: cp -r /tmp/magento/ {{ magento_src_dir }} creates={{ magento_src_dir }}
+- name: Magento | Move Magento to expected folder
+  command: mv /opt/magento/ {{ magento_src_dir }} creates={{ magento_src_dir }}
 
 - name: Magento | Make mage file executable
   file: path={{ magento_src_dir }}/mage mode=550
 
 - name: Cleanup | Remove installation crud
-  shell: rm -rf {{ magento_src_dir }}/*.{sample,txt}
+  file: path={{ magento_src_dir }}/{{ item }} state=absent
+  with_items:
+    - php.ini.sample
+    - index.php.sample
+    - .htaccess.sample
+    - RELEASE_NOTES.txt
+    - LICENSE_AFL.txt
+    - LICENSE.html
+    - LICENSE.txt
