@@ -16,8 +16,8 @@ server {
 
   client_max_body_size 4G;
 
-  access_log  /var/log/nginx/access.log;
-  error_log  /var/log/nginx/error.log;
+  access_log  {{ magento_access_log }};
+  error_log  {{ magento_error_log }};
 
   server_name  {{ magento_hostnames|join(' ') }};
   root /var/www/{{ magento_project_name }}/current;
