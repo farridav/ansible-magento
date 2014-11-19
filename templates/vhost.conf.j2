@@ -1,6 +1,4 @@
-map $http_host $magesite {
-
-}
+map $http_host $magesite {}
 
 server {
   listen {{ magento_port }};
@@ -35,23 +33,15 @@ server {
   }
 
   # handle all .php files, /downloader and /report
-  location ~ (\.php|/downloader/?|/report/?)$ {
+  location ~ (\.php|/downloader/?|/report/?)) {
 
     # no trailing /, redirecting
     if ($request_uri ~ /(downloader|report)$){
       rewrite  ^(.*)$ $1/ permanent;
     }
 
-    fastcgi_index index.php;
-    include /etc/nginx/fastcgi_params;
-    fastcgi_param MAGE_RUN_TYPE store;
-    fastcgi_param MAGE_RUN_CODE $magesite;
-    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-    fastcgi_read_timeout 300;
+    try_files $uri @magento;
 
-    if (-e $request_filename) { # check if requested path exists
-      fastcgi_pass unix:/var/run/php5-fpm.sock;
-    }
   }
 
   location ~* \.(ico|css|js|gif|jpe?g|png)$ {
@@ -60,7 +50,17 @@ server {
     add_header Cache-Control "public, must-revalidate, proxy-revalidate";
   }
 
-  # handle magento
+  {% if magento_ssl: %}
+  # Ensure we force SSL for customer and checkout pages
+  location ~ (^/(customer/|checkout/)$ {
+    if ( $scheme = "http" ) {
+        return 301 https://$host$request_uri;
+    }
+    fastcgi_param HTTPS on;
+    try_files $uri @magento;
+  }
+  {% endif %}
+
   location / {
 
     {% if magento_auth %}
@@ -68,7 +68,11 @@ server {
     auth_basic_user_file /var/www/{{ magento_project_name }}/.htpasswd;
     {% endif %}
 
-    # set fastcgi settings, not allowed in the "if" block
+    try_files $uri @magento;
+  }
+
+  # Handle Magento
+  location @magento {
     include /etc/nginx/fastcgi_params;
     fastcgi_param MAGE_RUN_TYPE store;
     fastcgi_param MAGE_RUN_CODE $magesite;
@@ -78,11 +82,7 @@ server {
     fastcgi_buffers 256 16k;
     fastcgi_busy_buffers_size 256k;
     fastcgi_temp_file_write_size 256k;
-
-    # rewrite - if file not found, pass it to the backend
-    if (!-f $request_filename) {
-      fastcgi_pass unix:/var/run/php5-fpm.sock;
-      break;
-    }
+    fastcgi_pass unix:/var/run/php5-fpm.sock;
   }
+
 }

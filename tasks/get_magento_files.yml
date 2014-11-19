@@ -7,7 +7,7 @@
 - name: Magento Files | Download Magento
   get_url: url=http://www.magentocommerce.com/downloads/assets/{{ magento_version }}/magento-{{ magento_version }}.tar.gz
            dest=/opt/magento-{{ magento_version }}.tar.gz
-  when: magento.stat.isdir is defined and magento.stat.isdir
+  when: magento.stat is not defined
 
 - name: Magento Files | Extract Magento
   command: chdir=/opt tar -xf /opt/magento-{{ magento_version }}.tar.gz
