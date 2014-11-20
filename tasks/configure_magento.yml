@@ -30,6 +30,7 @@
 
 - name: Magento Config | write vhost
   template: src=vhost.conf.j2 dest=/etc/nginx/sites-available/{{ magento_project_name }}
+  tags: vhost
   notify:
     - restart nginx
 
