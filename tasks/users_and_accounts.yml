@@ -1,42 +1,36 @@
 ---
 
-- name: Magento | Create application group
+- name: Users & Accounts | Add application group
   group: name={{ magento_application_group }} system=yes state=present
 
-- name: Magento | Ensure /var/www/ folder is made before we try to add our user
+- name: Users & Accounts | Ensure web folder is made before we add our user
   file: path=/var/www state=directory owner='www-data' group='www-data'
 
-- name: Magento | Add application user
+- name: Users & Accounts | Add application user
   user: name={{ magento_application_user }} group={{ magento_application_group }} state=present
         createhome=yes home={{magento_home_dir }} shell=/bin/bash system=true
 
-- name: Grant application user sudo access
+- name: Users & Accounts | Grant application user sudo access
   copy: content='{{ magento_application_user }} ALL=(ALL) NOPASSWD:ALL'
         dest=/etc/sudoers.d/magento_application_user mode=0440
 
-- name: Magento | Ensure storage directory is made
+- name: Users & Accounts | Ensure storage directory is made
   file: path={{ magento_storage_dir }} state=directory
         owner={{ magento_application_user }} group='www-data'
 
-- name: Magento | Ensure media directory is made
+- name: Users & Accounts | Ensure media directory is made
   file: path={{ magento_media_dir }} state=directory
         owner={{ magento_application_user }} group='www-data'
 
-- name: Add key to authorized keys
+- name: Users & Accounts | Add key to authorized keys
   authorized_key: user={{ magento_application_user }} key="{{ magento_public_key }}"
 
-- name: Magento | Set application environmental variables
+- name: Users & Accounts | Set application environmental variables
   template: src=bash_profile.j2 dest={{magento_home_dir }}/.bash_profile
             owner={{ magento_application_user }} group={{ magento_application_user }}
   tags:
     - env
 
-- name: Magento | Create the applications releases Folder
+- name: Users & Accounts | Create the applications releases Folder
   file: path={{ magento_release_dir }} state=directory
         owner={{ magento_application_user }} group='www-data'
-
-- name: Password protect our site
-  htpasswd: path=/var/www/{{ magento_project_name }}/.htpasswd
-            name={{ magento_auth_user }} password={{ magento_auth_password }}
-            owner={{ magento_application_user }} group=www-data mode=0640
-  when: magento_auth

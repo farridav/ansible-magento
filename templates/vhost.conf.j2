@@ -39,17 +39,6 @@ server {
     expires 30d;
   }
 
-  {% if magento_ssl: %}
-  # Ensure we force SSL for customer and checkout pages
-  location ~ (^/(customer/|checkout/)) {
-    if ( $scheme = "http" ) {
-        return 301 https://$host$request_uri;
-    }
-    fastcgi_param HTTPS on;
-    try_files $uri $uri/ @handler;
-  }
-  {% endif %}
-
   # These locations would be hidden by .htaccess normally
   location ^~ /app/                { deny all; }
   location ^~ /includes/           { deny all; }

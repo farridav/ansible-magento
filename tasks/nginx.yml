@@ -1,0 +1,24 @@
+---
+
+- name: Magento Nginx | disable default vhost
+  file: path=/etc/nginx/sites-enabled/default state=absent
+  notify:
+    - restart nginx
+
+- name: Magento Nginx | write vhost
+  template: src=vhost.conf.j2 dest=/etc/nginx/sites-available/{{ magento_project_name }}
+  tags: vhost
+  notify:
+    - restart nginx
+
+- name: Magento Nginx | enable vhost
+  file: src=/etc/nginx/sites-available/{{ magento_project_name }}
+        dest=/etc/nginx/sites-enabled/{{ magento_project_name }} state=link
+  notify:
+    - restart nginx
+
+- name: Magento Nginx | Password protect our site
+  htpasswd: path=/var/www/{{ magento_project_name }}/.htpasswd
+            name={{ magento_auth_user }} password={{ magento_auth_password }}
+            owner={{ magento_application_user }} group=www-data mode=0640
+  when: magento_auth

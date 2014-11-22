@@ -1,26 +1,26 @@
 ---
 
-- name: Magento | Change owner and group of {{ magento_src_dir }}
+- name: Permissions | Change owner and group of Magento source
   file: path={{ magento_src_dir }}
         owner={{ magento_application_user }} group=www-data state=directory recurse=yes
 
-- name: Magento | Give All magento files 644 permission
+- name: Permissions | Give All Magento files 644 permission
   command: find {{ magento_src_dir }} -type f -exec chmod 644 {} \;
 
-- name: Magento | Give all magento folders 755 permission
+- name: Permissions | Give all Magento folders 755 permission
   command: find {{ magento_src_dir }} -type d -exec chmod 755 {} \;
 
-- name: Magento | Ensure the owner can write to these directories
+- name: Permissions | Ensure the owner can write to these directories
   command: chmod g+w {{ item }}
   with_items:
     - '{{ magento_src_dir }}/app/etc'
     - '{{ magento_src_dir }}/var'
 
-- name: Magento | Change ownership of magento installation 5
+- name: Permissions | Change ownership of Magento installation 5
   file: path={{ magento_src_dir }}/mage mode=550
 
-- name: Magento | Change ownership of magento installation 6
+- name: Permissions | Change ownership of Magento installation 6
   command: chmod -R g+w {{ magento_media_dir }}
 
-- name: Magento | ensure group can write to {{ magento_src_dir }}
+- name: Permissions | ensure group can write to Magento source
   command: chmod -R g+rw {{ magento_src_dir }}

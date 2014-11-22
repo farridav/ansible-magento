@@ -1,9 +1,9 @@
 ---
 
-- include: setup_users.yml
+- include: users_and_accounts.yml
 
-- include: get_magento_files.yml
+- include: magento.yml
 
-- include: configure_magento.yml
+- include: permissions.yml
 
-- include: set_permissions.yml
+- include: nginx.yml

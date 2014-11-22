@@ -1,0 +1,61 @@
+---
+
+- name: Magento | Install packages required by Magento
+  apt: name={{ item }} state=present update_cache=yes
+  with_items:
+    - php5-gd
+    - php5-mysql
+    - php5-curl
+    - php5-mcrypt
+    - php-apc
+  notify:
+    - restart php-fpm
+
+- name: Magento | Ensure php5-mcrypt module is enabled
+  command: php5enmod mcrypt
+
+- name: Magento | Check if we have Magento downloaded
+  stat: path=/opt/magento-{{ magento_version }}.tar.gz get_md5=no
+  register: magento_download
+
+- name: Magento | Download Magento
+  get_url: url=http://www.magentocommerce.com/downloads/assets/{{ magento_version }}/magento-{{ magento_version }}.tar.gz
+           dest=/opt/magento-{{ magento_version }}.tar.gz
+  when: not magento_download.stat.exists
+
+- name: Magento | Extract Magento
+  command: chdir=/opt tar -xf /opt/magento-{{ magento_version }}.tar.gz
+           creates=/opt/magento
+
+- name: Magento | Move Magento to expected folder
+  command: mv /opt/magento/ {{ magento_src_dir }} creates={{ magento_src_dir }}
+
+- name: Magento | Remove installation crud
+  file: path={{ magento_src_dir }}/{{ item }} state=absent
+  with_items:
+    - php.ini.sample
+    - index.php.sample
+    - .htaccess.sample
+    - RELEASE_NOTES.txt
+    - LICENSE_AFL.txt
+    - LICENSE.html
+    - LICENSE.txt
+
+- name: Magento | Ensure needed files are executable
+  file: path={{ magento_src_dir }}/{{ item }} mode=550
+  with_items:
+    - mage
+    - cron.sh
+
+- name: Magento | Mage Setup
+  command: chdir={{ magento_src_dir }} ./mage mage-setup .
+
+- name: Magento | write local.xml file out
+  template: src=local.xml.j2 dest={{ magento_src_dir }}/app/etc/local.xml
+
+- name: Magento | Mage Stable State
+  command: chdir={{ magento_src_dir }} ./mage config-set preferred_state stable
+
+- name: Magento | setup cron
+  cron: name='Magento cron' minute='*/5' user='{{ magento_application_user }}'
+        job='/bin/sh {{ magento_current_release }}/cron.sh'
