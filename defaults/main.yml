@@ -1,7 +1,7 @@
 ---
 
 # Which version of Magento to deploy
-magento_version: 1.9.0.1
+magento_version: 1.9.1.0
 magento_home_dir: '/var/www/{{ magento_project_name }}'
 magento_release_dir: '{{magento_home_dir }}/releases'
 magento_current_release: '{{magento_home_dir }}/current'
