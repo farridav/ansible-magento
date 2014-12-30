@@ -1,0 +1,8 @@
+#!/bin/sh
+#
+# Clean out session, tmp, report based on time
+#
+
+find {{ magento_current_release }}/var/session/ -mtime +4 -exec rm -f {} \;
+find {{ magento_current_release }}/var/report/ -mtime +10 -exec rm -f {} \;
+find {{ magento_current_release }}/var/tmp/ -mtime +1 -exec rm -f {} \;
