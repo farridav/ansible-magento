@@ -29,7 +29,7 @@
 - name: Magento | Move Magento to expected folder
   command: mv /opt/magento/ {{ magento_src_dir }} creates={{ magento_src_dir }}
 
-- name: Magento | Remove installation crud
+- name: Magento | Remove installation cruft
   file: path={{ magento_src_dir }}/{{ item }} state=absent
   with_items:
     - php.ini.sample

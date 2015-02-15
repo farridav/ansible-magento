@@ -22,6 +22,10 @@
   file: path={{ magento_media_dir }} state=directory
         owner={{ magento_application_user }} group='www-data'
 
+- name: Users & Accounts | Ensure var directory is made
+  file: path={{ magento_var_dir }} state=directory mode=775
+        owner='www-data' group='www-data' recurse=true
+
 - name: Users & Accounts | Add key to authorized keys
   authorized_key: user={{ magento_application_user }} key="{{ magento_public_key }}"
 

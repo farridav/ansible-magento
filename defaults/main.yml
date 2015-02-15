@@ -2,6 +2,8 @@
 
 # Which version of Magento to deploy
 magento_version: 1.9.1.0
+
+# Directories
 magento_home_dir: '/var/www/{{ magento_project_name }}'
 magento_release_dir: '{{magento_home_dir }}/releases'
 magento_current_release: '{{magento_home_dir }}/current'
@@ -9,24 +11,36 @@ magento_previous_release: '{{magento_home_dir }}/previous'
 magento_src_dir: '/opt/magento_src'
 magento_storage_dir: '/mnt/{{ magento_project_name }}'
 magento_media_dir: '{{ magento_storage_dir }}/media'
+magento_var_dir: '{{ magento_storage_dir }}/var'
+magento_persistent_dirs:
+  - '{{ magento_media_dir }}'
+  - '{{ magento_var_dir }}'
+
+# Memcached
 magento_use_memcached: yes
 magento_memcached_port: 11211
 magento_memcached_host: localhost
+
+# SSL
 magento_ssl: no
 magento_ssl_crt_file:
 magento_ssl_key_file:
+
+# .htpasswd protection
+magento_auth: no
+magento_auth_user:
+magento_auth_password:
+
+# Nginx log files
 magento_access_log: /var/log/nginx/access.log
 magento_error_log: /var/log/nginx/error.log
 
-#System handlers
+# System handlers
 magento_application_group: '{{ magento_project_name }}'
 magento_application_user: '{{ magento_project_name }}'
 
 # Get our public key so we can login as the application user
 magento_public_key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
-
-# nginx protected
-magento_auth: no
 
 # Database settings
 magento_db_host: localhost
