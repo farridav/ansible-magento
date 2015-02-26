@@ -12,7 +12,10 @@ server {
   ssl_ciphers         HIGH:!aNULL:!MD5;
   {% endif %}
 
-  client_max_body_size 4G;
+  client_max_body_size {{ magento_client_max_body_size }};
+  client_header_timeout {{ magento_client_header_timeout }};
+  client_body_timeout {{ magento_client_body_timeout }};
+  proxy_read_timeout {{ magento_proxy_read_timeout }};
 
   access_log  {{ magento_access_log }};
   error_log  {{ magento_error_log }};
@@ -70,13 +73,16 @@ server {
   location ~ .php$ {
     if (!-e $request_filename) { rewrite / /index.php last; }
 
-    expires         off;
-    fastcgi_pass    unix:/var/run/php5-fpm.sock;
-    fastcgi_param   HTTPS $fastcgi_https;
-    fastcgi_param   SCRIPT_FILENAME  $document_root$fastcgi_script_name;
-    fastcgi_param   MAGE_RUN_CODE default;
-    fastcgi_param   MAGE_RUN_TYPE store;
-    include         fastcgi_params;
+    expires               off;
+    fastcgi_pass          unix:/var/run/php5-fpm.sock;
+    fastcgi_param         HTTPS $fastcgi_https;
+    fastcgi_read_timeout  {{ magento_fastcgi_read_timeout }};
+    fastcgi_param         SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+    fastcgi_param         MAGE_RUN_CODE default;
+    fastcgi_param         MAGE_RUN_TYPE store;
+    fastcgi_buffers       8 128k;
+    fastcgi_buffer_size   128k;
+    include               fastcgi_params;
   }
 
 }

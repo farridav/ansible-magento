@@ -47,3 +47,10 @@ magento_db_host: localhost
 magento_table_prefix: ''
 magento_session_storage: files
 magento_admin_path: admin
+
+# Timeout settings
+magento_fastcgi_read_timeout: 60s
+magento_proxy_read_timeout: 60s
+magento_client_max_body_size: 500M
+magento_client_header_timeout: 60s
+magento_client_body_timeout: 60s
