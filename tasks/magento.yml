@@ -7,6 +7,7 @@
     - php5-mysql
     - php5-curl
     - php5-mcrypt
+    - php5-memcache
     - php-apc
   notify:
     - restart php-fpm
@@ -18,16 +19,17 @@
   stat: path=/opt/magento-{{ magento_version }}.tar.gz get_md5=no
   register: magento_download
 
-- name: Magento | Download Magento
-  get_url: url=http://www.magentocommerce.com/downloads/assets/{{ magento_version }}/magento-{{ magento_version }}.tar.gz
-           dest=/opt/magento-{{ magento_version }}.tar.gz
-  when: not magento_download.stat.exists
+# wont work anymore
+#- name: Magento | Download Magento
+#  get_url: url=http://www.magentocommerce.com/downloads/assets/{{ magento_version }}/magento-{{ magento_version }}.tar.gz
+#           dest=/opt/magento-{{ magento_version }}.tar.gz
+#  when: not magento_download.stat.exists
 
-- name: Magento | Extract Magento
-  unarchive: src=/opt/magento-{{ magento_version }}.tar.gz dest=/opt/ copy=no
+#- name: Magento | Extract Magento
+#  unarchive: src=/opt/magento-{{ magento_version }}.tar.gz dest=/opt/ copy=no
 
-- name: Magento | Move Magento to expected folder
-  command: mv /opt/magento/ {{ magento_src_dir }} creates={{ magento_src_dir }}
+#- name: Magento | Move Magento to expected folder
+#  command: mv /opt/magento/ {{ magento_src_dir }} creates={{ magento_src_dir }}
 
 - name: Magento | Remove installation cruft
   file: path={{ magento_src_dir }}/{{ item }} state=absent
@@ -61,6 +63,6 @@
 - name: Magento | Mage Stable State
   command: chdir={{ magento_src_dir }} ./mage config-set preferred_state stable
 
-- name: Magento | setup cron
+- name: Magento | setup cron for every 5 minutes
   cron: name='Magento cron' minute='*/5' user='{{ magento_application_user }}'
         job='/bin/sh {{ magento_current_release }}/cron.sh'
